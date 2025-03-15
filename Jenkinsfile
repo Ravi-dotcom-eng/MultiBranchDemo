@@ -27,7 +27,7 @@ pipeline {
            sh 'echo "Test application..."'
         }
       }
-         stage("Package application") { 
+         stage("Package app") { 
          steps { 
            sh 'echo "package application..."'
          }
