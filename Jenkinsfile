@@ -1,49 +1,24 @@
-pipeline { 
-  
-   agent any
-
-   stages {
-   
-     stage('Checkout') { 
-        steps { 
-         sh 'echo "Checkout code"'
-        }
-     }
+pipeline {
+    agent any 
      
-     stage('Compile') { 
-        steps { 
-           sh 'echo "compile application..."'
-        }
-      }
-
-        stage('Review') { 
-        steps { 
-           sh 'echo "Review application..."'
-        }
-      }
-
-      stage('Test') { 
-        steps { 
-           sh 'echo "Test application..."'
-        }
-      }
-         stage("Package appfrdf") { 
-         steps { 
-           sh 'echo "package application..."'
+    stages{
+    
+         stage('Build') {
+              steps {
+                   sh 'mvn clean package'
+                
+              }
+              post {
+                 success{
+                      echo "Archiving the Artifacts"
+                      archiveArtifacts artifacts: '**/target/*.war'
+                 }
+              }
          }
-
-     }
-  
-   	
-
-     stage("Deploy application") { 
-      
-         steps { 
-           sh 'echo "Deployment application..."'
+         stage ('Deploy to tomcat server') {
+           steps{
+                deploy adapters: [tomcat9(path: '', url: 'http://54.187.198.1:8080/')], contextPath: null, war: '**/*.war'
+              }
          }
-
      }
-  
-   	}
-
-   }
+}
